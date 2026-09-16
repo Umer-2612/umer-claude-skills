@@ -1,0 +1,38 @@
+# Tag-driven release workflow.
+# Copy to .github/workflows/release.yml.
+#
+# Triggers when a semver tag is pushed (e.g. `v1.4.0`).
+# Creates a GitHub Release with auto-generated notes from PR titles.
+# Configure note grouping in .github/release.yml at the repo root (see GitHub docs).
+
+name: Release
+
+on:
+  push:
+    tags: ['v*.*.*']
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write   # required to create the release
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0   # full history needed for release notes
+
+      # Optional: build and attach artifacts.
+      # - name: Set up toolchain
+      #   uses: <setup action>
+      # - name: Build release artifact
+      #   run: |
+      #     # <your build command>
+      #     echo "REPLACE_ME"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@c95fe1489396fe8a9eb87c0abf8aa5b2ef267fda # v2.2.1
+        with:
+          generate_release_notes: true
+          # Uncomment to attach built artifacts:
+          # files: |
+          #   dist/*
